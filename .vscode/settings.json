@@ -1,0 +1,15 @@
+{
+    "python.analysis.indexing": true,
+    "python.analysis.packageIndexDepths":[
+        {
+            "name": "rest_framework",
+            "depth": 5,
+            "includeAllSymbols": true
+        },
+        {
+            "name": "drf_spectacular",
+            "depth": 5,
+            "includeAllSymbols": true
+        },
+    ],
+}

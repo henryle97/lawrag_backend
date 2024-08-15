@@ -1,0 +1,7 @@
+repos:
+  - repo: local
+    hooks:
+    - id: format-python-code
+      name: format python code
+      language: system
+      entry: bash scripts/format_code.sh

@@ -1,0 +1,16 @@
+version: '3.3'
+
+services:
+  lawrag:
+    image: hisiter/lawrag-devcontainers
+    networks:
+      lawrag:
+    volumes:
+      - .:/workspace
+    environment:
+      - DEBUG=1
+      - DJANGO_CONFIGURATION=development
+    ports:
+      - 7777:7000
+networks:
+  lawrag:

@@ -1,0 +1,49 @@
+FROM ubuntu:20.04@sha256:bffb6799d706144f263f4b91e1226745ffb5643ea0ea89c2f709208e8d70c999
+
+USER root
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get --no-install-recommends install -y build-essential curl git python3-dev python3-pip iputils-ping wget curl ssh gettext \
+    python3-venv python3-tk libsasl2-dev pkg-config nano libglib2.0-0 libsm6 libxrender1 libxext6 libgl1 lsof libsasl2-dev python-dev libldap2-dev libssl-dev
+RUN ln -sf /usr/bin/python3 /usr/bin/python & \
+    ln -sf /usr/bin/pip3 /usr/bin/pip
+
+RUN touch /root/.bashrc
+ENV BASH_ENV "/root/.bashrc"
+
+# Setup NodeJS
+# ENV NVM_DIR /root/.nvm
+# ENV NODE_VERSION 16.16.0
+# RUN mkdir -p $NVM_DIR
+# RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+# RUN source $NVM_DIR/nvm.sh \
+#     && nvm install $NODE_VERSION \
+#     && nvm alias default $NODE_VERSION \
+#     && nvm use default
+# RUN echo 'export NVM_DIR="/root/.nvm"' >> /root/.bashrc
+# RUN echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"' >> /root/.bashrc
+# RUN echo 'export PATH="$HOME/.local/bin:$PATH"' >> /root/.bashrc
+# RUN ln -s "/root/.nvm/versions/node/v$NODE_VERSION/bin/node" /usr/bin/node
+
+# RUN source $NVM_DIR/nvm.sh && npm install --location=global npm@9.2.0
+
+# Fix permission
+WORKDIR /workspace
+RUN chown -R root:root /workspace
+RUN chmod -R 777 /workspace
+
+# Install helm chart
+# RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 \
+#     && chmod 700 get_helm.sh \
+#     && ./get_helm.sh
+
+# Install Python dependencies
+COPY lawrag/requirements /tmp/requirements
+RUN pip install --no-cache-dir --upgrade pip==21.2.4 setuptools==59.8.0 wheel==0.37.1 \
+    && pip install --upgrade requests && pip install -r /tmp/requirements/development.txt
+
+
+COPY non-stop.sh /usr/sbin
+RUN chmod +x /usr/sbin/non-stop.sh
+CMD ["non-stop.sh"]
